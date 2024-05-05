@@ -1,0 +1,36 @@
+<sounds>
+    <sound>
+        <name>blip</name>
+        <filepath>sounds/blip</filepath>
+        <weight>2</weight>
+        <panStart>-0.5</panStart>
+        <panEnd>0.5</panEnd>
+    </sound>
+    <sound>
+        <name>click</name>
+        <filepath>sounds/click</filepath>
+        <weight>2</weight>
+        <panStart>-1.0</panStart>
+        <panEnd>0.0</panEnd>
+    </sound>
+    <sound>
+        <name>empty</name>
+        <weight>100</weight>
+        <panStart>-1.0</panStart>
+        <panEnd>1.0</panEnd>
+    </sound>
+    <sound>
+        <name>fly</name>
+        <filepath>sounds/fly</filepath>
+        <weight>2</weight>
+        <panStart>-1.0</panStart>
+        <panEnd>1.0</panEnd>
+    </sound>
+    <sound>
+        <name>synth</name>
+        <filepath>sounds/synth</filepath>
+        <weight>2</weight>
+        <panStart>-1.0</panStart>
+        <panEnd>1.0</panEnd>
+    </sound>
+</sounds>
