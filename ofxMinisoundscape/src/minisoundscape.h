@@ -157,7 +157,6 @@ void      ms_sound_set_spatialization(ms_sound* sound, bool spatialization);
 void      ms_sound_add_speaker(ms_sound* sound, const unsigned int speakerAmount, ...);
 void      ms_sound_add_speaker(ms_sound* sound, ms_sound_speaker* speaker);
 void      ms_sound_set_position(ms_sound* sound, double x, double y, double z);
-void      ms_sound_set_positioning(ms_sound* sound, ma_positioning positioning);
 void      ms_sound_set_distance(ms_sound* sound, double x, double y, double z);
 void      ms_sound_set_distance(ms_sound* sound, double x1, double y1, double z1, double x2, double y2, double z2);
 #endif /* MS_NO_SPATIALIZATION */
@@ -221,6 +220,7 @@ void ms_sound_init(std::string name, ma_engine* engine, unsigned int weight, std
 
         #ifndef MS_NO_SPATIALIZATION
             ma_sound_set_positioning(s, ma_positioning_relative);
+            ma_sound_set_pinned_listener_index(s, 0);
         #endif
 
         if (result != MA_SUCCESS) {
@@ -320,12 +320,6 @@ void ms_sound_add_speaker(ms_sound* sound, ms_sound_speaker* speaker) {
 void ms_sound_set_position(ms_sound* sound, double x, double y, double z) {
     for (ma_sound* s : sound->sounds) {
 	    ma_sound_set_position(s, x, y, z);
-    }
-}
-
-void ms_sound_set_positioning(ms_sound* sound, ma_positioning positioning) {
-    for (ma_sound* s : sound->sounds) {
-        ma_sound_set_positioning(s, positioning);
     }
 }
 

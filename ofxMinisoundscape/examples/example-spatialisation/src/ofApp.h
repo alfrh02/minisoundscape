@@ -31,6 +31,7 @@ class ofApp : public ofBaseApp{
 		ofTexture texSpeaker;
 		ofTexture texMicrophone;
 
+		glm::vec3 posSpeaker = glm::vec3(0);
 		glm::vec3 posMicrophone = glm::vec3(0);
 
 		bool ticking = true;

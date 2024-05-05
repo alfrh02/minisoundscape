@@ -2,7 +2,6 @@
 
 #define MA_ENGINE_MAX_LISTENERS 1
 
-#define MS_VERBOSE
 #include "minisoundscape.h"
 
 #define PATH(x) (ofToDataPath(x, true))
@@ -11,7 +10,7 @@ using namespace glm;
 
 static ma_engine engine;
 static ms_soundscape soundscape;
-vector<ms_sound_speaker*> speakers;
+static ms_sound_speaker speaker;
 
 ofTexture loadIcon(const std::string& filepath) {
 	ofImage img;
@@ -44,9 +43,6 @@ vec3 getGridCoords(const vec3 pos) {
 //--------------------------------------------------------------
 ofApp::~ofApp() {
 	ms_soundscape_uninit(&soundscape);
-	for (ms_sound_speaker* s : speakers) {
-		ms_sound_speaker_uninit(s);
-	}
 }
 
 //--------------------------------------------------------------
@@ -141,9 +137,7 @@ void ofApp::setup(){
 
 	ms_soundscape_init("soundscape", &engine, "", &soundscape);
 
-	ms_sound_speaker* speaker0 = new ms_sound_speaker;
-	ms_sound_speaker_init("speaker0", speaker0, -5, 0, 0);
-	speakers.push_back(speaker0);
+	ms_sound_speaker_init("speaker", &speaker, -5, 0, 0);
 
 	ofxXmlSettings settings;
 	settings.load("settings.xml");
@@ -167,9 +161,7 @@ void ofApp::setup(){
 			);
 		}
 
-		ms_sound_add_speaker(sound, speakers[0]);
-		// ms_sound_set_position(sound, speakers[0]->x, speakers[0]->y, speakers[0]->z);
-		// ms_sound_set_positioning(sound, ma_positioning_relative);
+		ms_sound_add_speaker(sound, &speaker);
 
 		ms_soundscape_add_sound(&soundscape, sound);
 		settings.popTag();
@@ -202,17 +194,14 @@ void ofApp::draw(){
 			spriteShader.setUniform1f("spriteRadius", 0.1);
 			spriteShader.setUniform4f("spriteColor",  vec4(1.0, 0.0, 0.0, 1.0));
 			spriteShader.setUniformTexture("tex",     texMicrophone, 0);
-			ofPushMatrix();
-				ofTranslate(getGridCoords(vec3(posMicrophone.x, ICON_Y, posMicrophone.z)));
-				mMicrophone.draw();
-			ofPopMatrix();
+
+			mMicrophone.draw(); // draws at 0, 0, 0
+
 			spriteShader.setUniformTexture("tex", texSpeaker, 0);
-			for (int i = 0; i < speakers.size(); i++) {
-				ofPushMatrix();
-					ofTranslate(getGridCoords(vec3(speakers[i]->x, speakers[i]->y, speakers[i]->z)));
-					mSpeaker.draw();
-				ofPopMatrix();
-			}
+			ofPushMatrix();
+				ofTranslate(getGridCoords(vec3(speaker.x, speaker.y, speaker.z)));
+				mSpeaker.draw();
+			ofPopMatrix();
 		spriteShader.end();
 		ofDisableBlendMode();
 		for (float y = 0; y < HEIGHT; y++) {
@@ -230,10 +219,10 @@ void ofApp::draw(){
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key) {
 	switch(key) {
-		case 'w': posMicrophone.z -= 1.0; break;
-		case 'a': posMicrophone.x -= 1.0; break;
-		case 's': posMicrophone.z += 1.0; break;
-		case 'd': posMicrophone.x += 1.0; break;
+		case 'w': posSpeaker.z -= 1.0; break;
+		case 'a': posSpeaker.x -= 1.0; break;
+		case 's': posSpeaker.z += 1.0; break;
+		case 'd': posSpeaker.x += 1.0; break;
 
 		case ' ':
 			ticking = !ticking;
@@ -243,12 +232,14 @@ void ofApp::keyPressed(int key) {
 			break;
 	}
 
-	if	    (posMicrophone.z < 0.0) posMicrophone.z = HEIGHT - 1;
-	else if (posMicrophone.z > HEIGHT - 1) posMicrophone.z = 0.0;
+	if	    (posSpeaker.z < 0.0) posSpeaker.z = HEIGHT - 1;
+	else if (posSpeaker.z > HEIGHT - 1) posSpeaker.z = 0.0;
 
-	if	    (posMicrophone.x < 0.0) posMicrophone.x = WIDTH - 1;
-	else if (posMicrophone.x > WIDTH - 1) posMicrophone.x = 0.0;
+	if	    (posSpeaker.x < 0.0) posSpeaker.x = WIDTH - 1;
+	else if (posSpeaker.x > WIDTH - 1) posSpeaker.x = 0.0;
 
-	// update our ma_engine's listener position to match the microphone's
-	ma_engine_listener_set_position(&engine, 0, posMicrophone.x, posMicrophone.y, posMicrophone.z);
+	speaker.x = posSpeaker.x;
+	speaker.y = posSpeaker.y;
+	speaker.z = posSpeaker.z;
+
 }
