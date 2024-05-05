@@ -91,7 +91,22 @@ void setup() {
     // we declare our ms_sound objects as pointers here.
     // IMPORTANT: do not specify the file extension - Minisoundscape takes care of that for us.
     ms_sound* sound = new ms_sound;
-    result = ms_sound_init("sound_name", &engine, 1, "file/path", &sound)
+    result = ms_sound_init("sound_name", &engine, 1, "file/path", &sound);
+
+    // we make an empty sound with a weight of 80
+    // since the previous sound has a weight of 1, it will have a 1/81 chance to play every time the soundscape ticks
+    ms_sound* empty = new ms_sound;
+    result = ms_sound_init_empty("empty", 80);
+
+    // we push this into the soundscape
+    // we can leave the ambient filepath as "" and it will be ignored. otherwise include a path to a sound you would like to constantly loop in the background
+    // we can use variadic arguments here too - just specify how many sounds you are using
+    ms_soundscape_init("soundscape", &engine, "", &soundscape, 2, sound, empty);
+}
+
+void update() {
+    // tick the soundscape every update loop
+    ms_soundscape_tick(&soundscape)
 }
 ```
 
